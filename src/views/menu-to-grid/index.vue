@@ -124,3 +124,6 @@ export default defineComponent({
    }
 })
 </script>
+<style>
+@import "@/assets/css/menu-to-grid/base.css";
+</style>
