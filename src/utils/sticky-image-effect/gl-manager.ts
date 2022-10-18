@@ -34,9 +34,8 @@ class GLManager {
       renderer.setSize(window.innerWidth, window.innerHeight)
       renderer.setPixelRatio(window.devicePixelRatio)
 
-      this.textures = data.map((entry: any, i: any) =>
-         new THREE.TextureLoader().load(entry.image, (texture) => this.calculateAspectRatioFactor(i, texture))
-      )
+      this.render = this.render.bind(this)
+      this.textures = data.map((entry: any, i: any) => new THREE.TextureLoader().load(entry.image, this.calculateAspectRatioFactor.bind(this, i)))
       this.factors = data.map((d: any) => new THREE.Vector2(1, 1))
       this.currentIndex = 0
       this.nextIndex = 0
@@ -47,6 +46,7 @@ class GLManager {
       this.initialRender = false
       this.time = 0
       this.loopRaf = null
+      this.loop = this.loop.bind(this)
    }
 
    calculateAspectRatioFactor(index: any, texture: THREE.Texture) {
@@ -100,73 +100,71 @@ class GLManager {
    createPlane() {
       // Calculate bas of Isoceles triangle(camera)
       const { width, height } = this.getPlaneSize()
-      const uniforms: any = {
-         u_texture: {
-            type: 't',
-            value: this.textures[this.currentIndex]
-         },
-         u_textureFactor: {
-            type: 'f',
-            value: this.factors[this.currentIndex]
-         },
-         u_texture2: {
-            type: 't',
-            value: this.textures[this.nextIndex]
-         },
-         u_texture2Factor: {
-            type: 'f',
-            value: this.factors[this.nextIndex]
-         },
-         u_textureProgress: {
-            type: 'f',
-            value: this.textureProgress
-         },
-         u_offset: {
-            type: 'f',
-            value: 8
-         },
-         u_progress: {
-            type: 'f',
-            value: 0
-         },
-         u_direction: {
-            type: 'f',
-            value: 1
-         },
-         u_effect: {
-            type: 'f',
-            value: 0
-         },
-         u_time: {
-            type: 'f',
-            value: this.time
-         },
-         u_waveIntensity: {
-            type: 'f',
-            value: 0
-         },
-         u_resolution: {
-            type: 'v2',
-            value: new THREE.Vector2(window.innerWidth, window.innerHeight)
-         },
-         u_rgbPosition: {
-            type: 'v2',
-            value: new THREE.Vector2(window.innerWidth / 2, window.innerHeight / 2)
-         },
-         u_rgbVelocity: {
-            type: 'v2',
-            value: new THREE.Vector2(0, 0)
-         }
-      }
-
       const segments = 60
       const geometry = new THREE.PlaneGeometry(width, height, segments, segments)
       const material = new THREE.ShaderMaterial({
-         uniforms,
+         uniforms: {
+            u_texture: {
+               type: 't',
+               value: this.textures[this.currentIndex],
+            },
+            u_textureFactor: {
+               type: 'f',
+               value: this.factors[this.currentIndex],
+            },
+            u_texture2: {
+               type: 't',
+               value: this.textures[this.nextIndex],
+            },
+            u_texture2Factor: {
+               type: 'f',
+               value: this.factors[this.nextIndex],
+            },
+            u_textureProgress: {
+               type: 'f',
+               value: this.textureProgress,
+            },
+            u_offset: {
+               type: 'f',
+               value: 8,
+            },
+            u_progress: {
+               type: 'f',
+               value: 0,
+            },
+            u_direction: {
+               type: 'f',
+               value: 1,
+            },
+            u_effect: {
+               type: 'f',
+               value: 0,
+            },
+            u_time: {
+               type: 'f',
+               value: this.time,
+            },
+            u_waveIntensity: {
+               type: 'f',
+               value: 0,
+            },
+            u_resolution: {
+               type: 'v2',
+               value: new THREE.Vector2(window.innerWidth, window.innerHeight),
+            },
+            u_rgbPosition: {
+               type: 'v2',
+               value: new THREE.Vector2(window.innerWidth / 2, window.innerHeight / 2),
+            },
+            u_rgbVelocity: {
+               type: 'v2',
+               value: new THREE.Vector2(0, 0),
+            },
+         } as any,
          vertexShader: vertex,
          fragmentShader: fragment,
-         side: THREE.DoubleSide
-      })
+         side: THREE.DoubleSide,
+      });
       const mesh = new THREE.Mesh(geometry, material)
       this.scene.add(mesh)
       this.mesh = mesh

@@ -6,7 +6,7 @@ const reach = function ({ from, to, restDelta = 0.01 }: any) {
       current: null
    }
 
-   let _update = function (update: any, complete: any) {
+   let _update: any = function (update: any, complete: any) {
       if (keys.length === 0) {
          cancelAnimationFrame(raf.current)
          raf.current = null

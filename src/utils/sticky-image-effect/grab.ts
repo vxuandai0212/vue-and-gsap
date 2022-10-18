@@ -41,7 +41,7 @@ class Grab {
          // }
          ev.preventDefault()
          grabListener({
-            y: ev.targetTouches[0] ? ev.targetTouches[0].clientY : null
+            y: ev ? ev.clientY : null
          })
       }
 
