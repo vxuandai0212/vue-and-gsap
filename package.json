@@ -10,6 +10,7 @@
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore"
   },
   "dependencies": {
+    "@studio-freight/lenis": "^0.2.8",
     "@types/imagesloaded": "^4.1.2",
     "@types/three": "^0.144.0",
     "@types/webfontloader": "^1.6.35",
